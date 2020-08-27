@@ -27,7 +27,7 @@ class GeneratorJ(nn.Module):
             "norm_layer should be None, 'batch_norm' or 'instance_norm', not {}".format(norm_layer)
         self.norm_layer = None
         if norm_layer == 'batch_norm':
-            self.norm_layer = nn.BatchNorm2d
+            self.norm_layer = nn.BatchNorm2d 
         elif norm_layer == 'instance_norm':
             self.norm_layer = nn.InstanceNorm2d
         self.gpu_ids = gpu_ids
@@ -249,6 +249,9 @@ class DiscriminatorN_IN(nn.Module):
 # Perception VGG19 loss
 #####
 class PerceptualVGG19(nn.Module):
+    """
+    feature_layers = [0, 3, 5, 10]
+    """
     def __init__(self, feature_layers, use_normalization=True, path=None):
         super(PerceptualVGG19, self).__init__()
         if path is not None:
@@ -317,3 +320,22 @@ class PerceptualVGG19(nn.Module):
     def forward(self, x):
         h = self.normalize(x)
         return self.run(h)
+
+
+if __name__ == '__main__':
+    from torch.nn import MSELoss
+    import torch.nn.functional as F
+    device = torch.device('cuda:0')
+    n_layers = 2
+    discriminator = DiscriminatorN_IN(num_filters=64, n_layers=3).to(device)
+    x = torch.randn(1, 3, 32, 32).to(device)
+    out, _ = discriminator(x)
+    print(out.device)
+    print(out.shape)
+    
+    loss_fn = MSELoss()
+    loss = loss_fn(x, torch.zeros_like(x).to(device))
+    print(loss)
+
+    out = F.interpolate(x, scale_factor=2)
+    print(out.shape)

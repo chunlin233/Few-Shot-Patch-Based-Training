@@ -3,7 +3,7 @@ import os
 import cv2
 
 
-def make_image_noisy(image, noise_typ):
+def make_image_noisy(image, noise_typ="gauss"):
     if noise_typ == "gauss":
         row, col, ch = image.shape
         mean = 0
@@ -57,3 +57,31 @@ def make_image_noisy(image, noise_typ):
     else:
         raise RuntimeError(f"Unknown noisy_type: {noise_typ}")
 
+
+if __name__ == '__main__':
+    from PIL import Image
+    import torch
+    import os
+    pre = Image.open(os.path.join('.', 'data', 'A.png'))
+    pre = np.array(pre)
+    print(pre.shape, pre.dtype)
+    # output = make_image_noisy(pre, 'zero')
+    # print(output.shape, output.dtype)
+    # import imageio
+    # imageio.imwrite(os.path.join('.', 'data', 'A_out_1.png'), output)
+
+    row, col, ch = pre.shape
+    mean = 0
+    var = 40
+    sigma = var**0.5
+    gauss = np.random.normal(mean, sigma, (row, col, ch))
+    print(gauss.shape)
+    print(np.std(gauss))
+    print(np.var(gauss))
+
+    x = torch.randn(2,2,3)
+    print(x.dtype)
+    # 一个元素所占字节数
+    print(x.element_size())
+    # 一共多少个元素
+    print(x.nelement())

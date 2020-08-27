@@ -47,6 +47,7 @@ def to_pil(tensor):
 
 
 def tensor_mb(tensor):
+    # 字节数/1024 = Kb, KB数/1024 = Mb
     return (tensor.element_size() * tensor.nelement()) / 1024 / 1024
 
 
